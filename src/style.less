@@ -1,0 +1,266 @@
+.dc-table{
+  height: 100%;
+  flex:1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  // TODO: 当border为false时，考虑去掉这个`border`css属性(再出现2次就去掉)
+  border:1PX solid #ebeff2;
+  box-sizing: border-box;
+  position: relative;
+  table{// 不能加边框，影响计算
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    th, td {
+      height: 50px;
+      padding: 0 8px;
+      font-size: 14px;
+      color:#333;
+      box-sizing: border-box;
+    }
+  }
+
+  // 表格容器样式
+  .table-container,.bottom-table-container{
+    flex:1;
+    min-height:0;
+    position:relative;
+    display: flex;
+    flex-direction: column;
+    > *{
+      box-sizing: content-box;
+    }
+  }
+
+  // 底部固定表格容器样式覆写
+  .bottom-table-container{
+    flex:none;
+  }
+
+  .table-header__padding,.table-footer__padding{
+    background-color: #e9f1f5;
+    flex:none;
+    overflow: hidden;// 隐藏横向滚动条
+  }
+
+  .table-header__wrapper{// 不能加边框，影响计算
+    font-weight: bold;
+    color: #6f7c89;
+    overflow: hidden;
+  }
+
+  .table-body__wrapper{
+    background-color: #fff;
+    // flex: 0 1 auto;
+    min-height: 0;
+    height: 100%;
+    tr:not(:last-child){
+      border-bottom:1PX solid #ebeff2;
+    }
+  }
+
+  .table-body__overflow{
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    flex:auto;
+  }
+
+  // #region 左右固定表格样式
+  .dc-fixed-left-table,
+  .dc-fixed-right-table,
+  .dc-bottom-fixed-left-table,
+  .dc-bottom-fixed-right-table{
+    position: absolute;
+    top:0;
+    left:0;
+    z-index: 1;
+    &.slice-shadow{
+      padding-right: 4px;
+      overflow: hidden;
+    }
+    
+    .shadow{
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      &.active{
+        box-shadow: 0 0 4px #9e9e9e;
+      }
+    }
+  }
+  
+  .dc-fixed-right-table,
+  .dc-bottom-fixed-right-table{
+    left:auto;
+    right:0;
+    &.slice-shadow{
+      padding-left: 4px;
+      padding-right: 0;
+    }
+  }
+  // #endregion
+
+  // #region 带边框表格样式覆写
+  &.border{
+    border:0;
+    tr{
+      border:0 !important;
+    }
+    td,th{
+      border:1PX solid #c8d0d7;
+      &:first-child{
+        border-left:0;
+      }
+      &:last-child{
+        border-right:0;
+      }
+    }
+
+    .table-header__wrapper,.table-footer__wrapper{
+      border-left:1PX solid #c8d0d7;
+      border-right:1PX solid #c8d0d7;
+    }
+
+    .table-body__wrapper{
+      padding-left: 1PX;
+      padding-right: 1PX;
+      &.need-border{
+        padding-left: 0PX;
+        padding-right: 0PX;
+        border-left:1PX solid #c8d0d7;
+        border-right:1PX solid #c8d0d7;
+      }
+      tbody > tr{
+        &:first-child td{
+          border-top:0 !important;
+        }
+      }
+    }
+
+    &.overflow-y{
+      .table-body__wrapper.need-border{
+        border-right: 0;
+        padding-right: 1PX;
+      }
+    }
+
+    .table-body--border-bottom{
+      position: absolute;
+      left:0;
+      bottom: 0;
+      border-bottom: 1PX solid #c8d0d7;
+    }
+
+    .table-body--border-right{
+      position: absolute;
+      top:0;
+      bottom:0;
+      width: 0;
+      border-right: 1PX solid #c8d0d7;
+    }
+
+    &.overflow-x{
+      .dc-fixed-left-table,.dc-fixed-right-table{
+        .table-body--border-bottom{
+          display: none;
+        }
+      }
+    }
+
+    .dc-fixed-left-table,.dc-bottom-fixed-left-table{
+      .table-header__wrapper{
+        border-right: 0;
+      }
+      .table-body__wrapper{
+        padding-right: 0;
+      }
+      .table-body--border-right{
+        display: none;
+      } 
+    }
+
+    .dc-fixed-right-table,.dc-bottom-fixed-right-table{
+      .table-header__wrapper{
+        border-left: 0;
+      }
+      .table-body__wrapper{
+        border-left: 0;
+      }
+    }
+  }
+  // #endregion
+
+  // #region loading和无数据样式
+  .no-data,.loading{
+    text-align: center;
+    font-size: 16px;
+    overflow: hidden;
+    line-height: 50px;
+  }
+
+  .no-data-icon{
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 629px;
+    width: 50%;
+    background: url('./assets/no-data.png') center / 100% 100%;
+    &::before{
+      content: '';
+      display: block;
+      @pt: (100*378/629);
+      padding-top: ~"@{pt}%";
+    }
+  }
+
+  .loading::before{
+    content: '';
+    vertical-align: -3px;
+    margin-right: 8px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border:1PX solid;
+    border-right-color: transparent;
+    animation: turn 1s linear infinite;
+    border-radius: 50%;
+  }
+  // #endregion
+
+  // #region 模拟滚动条样式
+  .track{
+    display: none;
+    position: absolute;
+    transition: opacity 500ms linear;
+    top:0;
+    bottom:0;
+    right:0;
+    .slider{
+      width: 100%;
+      background-color: #929196;
+      position: absolute;
+      top:0;
+      left:0;
+    }
+  }
+  // #endregion
+
+  // #region other
+  .cursor-pointer{
+    cursor: pointer;
+  }
+
+  @keyframes turn {
+    0%{
+      transform: rotate(0deg);
+    }
+    100%{
+      transform: rotate(360deg);
+    }
+  }
+  // #endregion
+}
